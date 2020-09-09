@@ -9,9 +9,9 @@ import (
 )
 
 func setup(app *cli.App) {
-	app.Name = "go-semtag"
-	app.Usage = ""
-	app.Version = ""
+	app.Name = "semtag"
+	app.Usage = "Tag your repository according to Semantic Versioning."
+	app.Version = "0.0.1"
 	app.Compiled = time.Now()
 
 	// some commands share the same arguments

@@ -136,6 +136,7 @@ func before(c *cli.Context) error {
 		firstVersion = tags[0]
 		lastVersion = firstVersion
 		currentVersion = firstVersion
+		finalVersion = firstVersion
 	default:
 		firstVersion = tags[0]
 		lastVersion = tags[len(tags)-1]

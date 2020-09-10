@@ -57,7 +57,7 @@ func setup(app *cli.App) {
 			Aliases: []string{"f"},
 			EnvVars: []string{"SEMTAG_FORCE"},
 			Value:   false,
-			Usage:   "Forces to tag, even if there are unstaged or uncommited changes.",
+			Usage:   "Forces to tag, even if there are un-staged or un-committed changes.",
 		},
 	}
 
@@ -79,8 +79,8 @@ func setup(app *cli.App) {
 		},
 		{
 			Name: "getcurrent",
-			Usage: `Returns the current version, based on the latest one, if there are uncommited or
-               unstaged changes, they will be reflected in the version, adding the number of
+			Usage: `Returns the current version, based on the latest one, if there are un-committed or
+               un-staged changes, they will be reflected in the version, adding the number of
                pending commits, current branch and commit hash.`,
 			Action: getCurrentAction,
 		},

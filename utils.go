@@ -3,10 +3,11 @@ package main
 import (
 	"fmt"
 	"os"
+	"strings"
 
 	"github.com/coreos/go-semver/semver"
 	"github.com/go-git/go-git/v5"
-	"github.com/go-git/go-git/v5/plumbing/object"
+	"github.com/go-git/go-git/v5/plumbing"
 )
 
 // checkIfError ... checks err and exists if necessary
@@ -34,12 +35,30 @@ func getRepository() *git.Repository {
 // getTagsAsSemver ... get slice of tags from repository
 func getTagsAsSemver(repository *git.Repository) []*semver.Version {
 	var tagsAsSemver []*semver.Version
+	var toAppend string
 
-	tagObjs, err := repository.TagObjects()
+	// Get all tags (annotated and light)
+	iter, err := repository.Tags()
 	checkIfError(err)
 
-	err = tagObjs.ForEach(func(t *object.Tag) error {
-		tagsAsSemver = append(tagsAsSemver, semver.New(t.Name))
+	err = iter.ForEach(func(ref *plumbing.Reference) error {
+		obj, err := repository.TagObject(ref.Hash())
+
+		// check if annotated tag
+		switch err {
+		case nil:
+			// If annotated, can simply take the Name
+			toAppend = obj.Name
+		case plumbing.ErrObjectNotFound:
+			// If not, will need to do some hacking
+			toAppend = strings.Split(ref.String(), "/")[2]
+		}
+
+		// trim leading `v` if there
+		toAppend = strings.TrimPrefix(toAppend, "v")
+
+		tagsAsSemver = append(tagsAsSemver, semver.New(toAppend))
+
 		return nil
 	})
 	checkIfError(err)

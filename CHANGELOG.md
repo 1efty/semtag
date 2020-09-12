@@ -7,9 +7,16 @@ All notable changes to this project will be documented in this file.
 
 
 
+<a name="v0.0.3"></a>
+## [v0.0.3] - 2020-09-11
+
+- Validate scope before creating tag
+
+
 <a name="v0.0.2"></a>
 ## [v0.0.2] - 2020-09-09
 
+- chore: prepare v0.0.2 release
 - Update CHANGELOG
 - fix: ensure all tags (annotated and light) are properly discovered
 - fix: grammar in cli usage
@@ -23,5 +30,6 @@ All notable changes to this project will be documented in this file.
 - Initial commit
 
 
-[Unreleased]: https://github.com/1efty/semtag/compare/v0.0.2...HEAD
+[Unreleased]: https://github.com/1efty/semtag/compare/v0.0.3...HEAD
+[v0.0.3]: https://github.com/1efty/semtag/compare/v0.0.2...v0.0.3
 [v0.0.2]: https://github.com/1efty/semtag/compare/v0.0.1...v0.0.2

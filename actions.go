@@ -30,27 +30,35 @@ func getCurrentAction(c *cli.Context) error {
 func finalAction(c *cli.Context) error {
 	v, err := bumpVersion(lastVersion, c.String("scope"), "", "")
 	checkIfError(err)
+
 	createTag(repository, v.String())
+
 	return nil
 }
 
 func candidateAction(c *cli.Context) error {
 	v, err := bumpVersion(lastVersion, c.String("scope"), "rc", c.String("metadata"))
 	checkIfError(err)
+
 	createTag(repository, v.String())
+
 	return nil
 }
 
 func alphaAction(c *cli.Context) error {
 	v, err := bumpVersion(lastVersion, c.String("scope"), "alpha", c.String("metadata"))
 	checkIfError(err)
+
 	createTag(repository, v.String())
+
 	return nil
 }
 
 func betaAction(c *cli.Context) error {
 	v, err := bumpVersion(lastVersion, c.String("scope"), "beta", c.String("metadata"))
 	checkIfError(err)
+
 	createTag(repository, v.String())
+
 	return nil
 }

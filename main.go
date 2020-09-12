@@ -16,6 +16,7 @@ var (
 	finalVersion   *semver.Version
 	tags           []*semver.Version
 	repository     *git.Repository
+	validScopes    = []string{"patch", "minor", "major"}
 )
 
 func main() {

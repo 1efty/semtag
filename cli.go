@@ -11,7 +11,7 @@ import (
 func setup(app *cli.App) {
 	app.Name = "semtag"
 	app.Usage = "Tag your repository according to Semantic Versioning."
-	app.Version = "v0.0.2"
+	app.Version = "v0.0.3"
 	app.Compiled = time.Now()
 
 	// some commands share the same arguments

@@ -1,6 +1,7 @@
 package main
 
 import (
+	"errors"
 	"fmt"
 	"os"
 	"strings"
@@ -84,6 +85,8 @@ func createTag(repository *git.Repository, tag string) error {
 
 // bumpVersion ... create new version and bump according to scope
 func bumpVersion(v *semver.Version, scope string, preRelease string, metadata string) (*semver.Version, error) {
+	err := validateScope(scope)
+	checkIfError(err)
 
 	newVersion := &semver.Version{
 		Major: v.Major,
@@ -107,4 +110,22 @@ func bumpVersion(v *semver.Version, scope string, preRelease string, metadata st
 	newVersion.Metadata = metadata
 
 	return newVersion, nil
+}
+
+// validateScope ... validates a given scope against validScopes
+func validateScope(scope string) error {
+	if stringInSlice(scope, validScopes) {
+		return nil
+	}
+	return errors.New("scope must be one of: " + strings.Join(validScopes, ", "))
+}
+
+// stringInSlice ... determines if a given string is in a slice of strings
+func stringInSlice(a string, list []string) bool {
+	for _, b := range list {
+		if b == a {
+			return true
+		}
+	}
+	return false
 }

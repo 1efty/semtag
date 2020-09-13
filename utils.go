@@ -1,7 +1,6 @@
 package main
 
 import (
-	"errors"
 	"fmt"
 	"os"
 	"strings"
@@ -34,38 +33,39 @@ func getRepository() *git.Repository {
 }
 
 // getTagsAsSemver ... get slice of tags from repository
-func getTagsAsSemver(repository *git.Repository) []*semver.Version {
-	var tagsAsSemver []*semver.Version
-	var toAppend string
+func getTagsAsSemver(repository *git.Repository) []*Version {
+	var tagsAsSemver []*Version
 
 	// Get all tags (annotated and light)
 	iter, err := repository.Tags()
 	checkIfError(err)
 
 	err = iter.ForEach(func(ref *plumbing.Reference) error {
+		var versionString string = "0.0.0"
+		var leadingV bool = false
 		obj, err := repository.TagObject(ref.Hash())
 
 		// check if annotated tag
 		switch err {
 		case nil:
 			// If annotated, can simply take the Name
-			toAppend = obj.Name
+			versionString = obj.Name
 		case plumbing.ErrObjectNotFound:
 			// If not, will need to do some hacking
-			toAppend = strings.Split(ref.String(), "/")[2]
+			versionString = strings.Split(ref.String(), "/")[2]
 		}
 
-		// trim leading `v` if there
-		toAppend = strings.TrimPrefix(toAppend, "v")
+		// handle leading `v`
+		if strings.HasPrefix(versionString, "v") {
+			leadingV = true
+			versionString = strings.TrimPrefix(versionString, "v")
+		}
 
-		tagsAsSemver = append(tagsAsSemver, semver.New(toAppend))
+		tagsAsSemver = append(tagsAsSemver, &Version{leadingV: leadingV, semver: semver.New(versionString)})
 
 		return nil
 	})
 	checkIfError(err)
-
-	// sort slice
-	semver.Sort(tagsAsSemver)
 
 	return tagsAsSemver
 }
@@ -84,48 +84,17 @@ func createTag(repository *git.Repository, tag string) error {
 }
 
 // bumpVersion ... create new version and bump according to scope
-func bumpVersion(v *semver.Version, scope string, preRelease string, metadata string) (*semver.Version, error) {
-	err := validateScope(scope)
+func bumpVersion(v *Version, scope string, preRelease string, metadata string) (*Version, error) {
+	newVersion := &Version{
+		leadingV: v.leadingV,
+		semver:   v.semver,
+	}
+	err := newVersion.Bump(scope)
 	checkIfError(err)
 
-	newVersion := &semver.Version{
-		Major: v.Major,
-		Minor: v.Minor,
-		Patch: v.Patch,
-	}
-
-	switch scope {
-	case "patch":
-		newVersion.BumpPatch()
-	case "minor":
-		newVersion.BumpMinor()
-	case "major":
-		newVersion.BumpMajor()
-	default:
-		newVersion.BumpPatch()
-	}
-
 	// set pre-release and metadata
-	newVersion.PreRelease = semver.PreRelease(preRelease)
-	newVersion.Metadata = metadata
+	newVersion.semver.PreRelease = semver.PreRelease(preRelease)
+	newVersion.semver.Metadata = metadata
 
 	return newVersion, nil
-}
-
-// validateScope ... validates a given scope against validScopes
-func validateScope(scope string) error {
-	if stringInSlice(scope, validScopes) {
-		return nil
-	}
-	return errors.New("scope must be one of: " + strings.Join(validScopes, ", "))
-}
-
-// stringInSlice ... determines if a given string is in a slice of strings
-func stringInSlice(a string, list []string) bool {
-	for _, b := range list {
-		if b == a {
-			return true
-		}
-	}
-	return false
 }

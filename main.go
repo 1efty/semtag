@@ -4,19 +4,17 @@ import (
 	"fmt"
 	"os"
 
-	"github.com/coreos/go-semver/semver"
 	"github.com/go-git/go-git/v5"
 )
 
 // globals
 var (
-	firstVersion   *semver.Version
-	lastVersion    *semver.Version
-	currentVersion *semver.Version
-	finalVersion   *semver.Version
-	tags           []*semver.Version
+	firstVersion   *Version
+	lastVersion    *Version
+	currentVersion *Version
+	finalVersion   *Version
+	tags           []*Version
 	repository     *git.Repository
-	validScopes    = []string{"patch", "minor", "major"}
 )
 
 func main() {

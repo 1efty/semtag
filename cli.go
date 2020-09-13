@@ -128,7 +128,7 @@ func before(c *cli.Context) error {
 	// set globals
 	switch numOfTags := len(tags); numOfTags {
 	case 0:
-		firstVersion = semver.New("0.0.0")
+		firstVersion = &Version{leadingV: false, semver: semver.New("0.0.0")}
 		lastVersion = firstVersion
 		currentVersion = firstVersion
 		finalVersion = firstVersion

@@ -23,6 +23,6 @@ var betaCmd = &cobra.Command{
 func betaAction() error {
 	v, err := lib.BumpVersion(lastVersion, Scope, "beta", Metadata)
 	lib.CheckIfError(err)
-	lib.CreateTag(repository, v.String())
+	tagAction(repository, v.String(), Output)
 	return nil
 }

@@ -126,3 +126,11 @@ func initConfig() {
 		fmt.Println("Using config file:", viper.ConfigFileUsed())
 	}
 }
+
+func tagAction(repository *git.Repository, tag string, dryrun bool) {
+	if dryrun {
+		lib.Info(fmt.Sprintf("To be tagged: %s", tag))
+	} else {
+		lib.CreateTag(repository, tag)
+	}
+}

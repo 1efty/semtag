@@ -65,7 +65,7 @@ func GetFinalVersion(repository *git.Repository) *Version {
 		tempSemver := semver.New(tempVersionString)
 
 		// change final variables if a tag was found that is newer, and is not an alpha, beta, or release-candidate
-		if ! tempSemver.LessThan(*finalSemver) && tempSemver.PreRelease == "" {
+		if !tempSemver.LessThan(*finalSemver) && tempSemver.PreRelease == "" {
 			finalSemver = tempSemver
 			finalLeadingV = tempLeadingV
 			finalVersion = &Version{LeadingV: finalLeadingV, Semver: tempSemver}

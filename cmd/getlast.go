@@ -4,7 +4,6 @@ import (
 	"fmt"
 
 	"github.com/1efty/semtag/lib"
-
 	"github.com/spf13/cobra"
 )
 

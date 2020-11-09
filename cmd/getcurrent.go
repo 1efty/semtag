@@ -1,8 +1,9 @@
 package cmd
 
 import (
-	"github.com/1efty/semtag/lib"
+	"fmt"
 
+	"github.com/1efty/semtag/lib"
 	"github.com/spf13/cobra"
 )
 
@@ -25,6 +26,6 @@ var getCurrentCmd = &cobra.Command{
 }
 
 func getCurrentAction() error {
-	lib.Info(currentVersion.String())
+	lib.Info(fmt.Sprintf("Current tagged version: %s", currentVersion.String()))
 	return nil
 }

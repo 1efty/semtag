@@ -23,8 +23,6 @@ var finalCmd = &cobra.Command{
 func finalAction() error {
 	v, err := lib.BumpVersion(lastVersion, Scope, "", "")
 	lib.CheckIfError(err)
-
 	lib.CreateTag(repository, v.String())
-
 	return nil
 }

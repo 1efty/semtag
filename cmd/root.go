@@ -82,9 +82,9 @@ func initGit() {
 
 	repository.Fetch(&git.FetchOptions{})
 
-	tags = lib.GetTagsAsSemver(repository)
+	tags = lib.GetTagsAsVersion(repository)
 
-	// set globals
+	// determine first, last, current, and final version
 	switch numOfTags := len(tags); numOfTags {
 	case 0:
 		firstVersion = &lib.Version{LeadingV: false, Semver: semver.New("0.0.0")}
@@ -100,7 +100,7 @@ func initGit() {
 		firstVersion = tags[0]
 		lastVersion = tags[len(tags)-1]
 		currentVersion = lastVersion
-		finalVersion = lastVersion
+		finalVersion = lib.GetFinalVersion(repository)
 	}
 }
 

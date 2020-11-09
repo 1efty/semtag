@@ -1,8 +1,9 @@
 package cmd
 
 import (
-	"github.com/1efty/semtag/lib"
+	"fmt"
 
+	"github.com/1efty/semtag/lib"
 	"github.com/spf13/cobra"
 )
 
@@ -22,6 +23,6 @@ var getFinalCmd = &cobra.Command{
 }
 
 func getFinalAction() error {
-	lib.Info(finalVersion.String())
+	lib.Info(fmt.Sprintf("Final tagged version: %v", finalVersion.String()))
 	return nil
 }

@@ -31,6 +31,14 @@ func getTagString(repository *git.Repository, ref *plumbing.Reference) (string, 
 	return versionString, nil
 }
 
+// GetStatus returns the status of the worktree
+func GetStatus(repository *git.Repository) (git.Status, error) {
+	worktree, err := repository.Worktree()
+	CheckIfError(err)
+	status, err := worktree.Status()
+	return status, err
+}
+
 // GetRepository tries to open current directory as git repository
 func GetRepository() *git.Repository {
 	repository, err := git.PlainOpen(".")

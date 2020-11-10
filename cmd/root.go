@@ -29,6 +29,7 @@ var (
 	Metadata string
 
 	repository     *git.Repository
+	status         *git.Status
 	firstVersion   *lib.Version
 	lastVersion    *lib.Version
 	currentVersion *lib.Version
@@ -78,10 +79,22 @@ func er(msg interface{}) {
 }
 
 func initGit() {
+	// get repository
 	repository = lib.GetRepository()
 
-	repository.Fetch(&git.FetchOptions{})
+	// get status of worktree
+	status, err := lib.GetStatus(repository)
+	lib.CheckIfError(err)
 
+	// exit if --force is not set and worktree contains changes
+	if len(status) > 0 && !Force {
+		lib.Info("The following changes were found in the worktree:\n\n" +
+			fmt.Sprintln(status) +
+			"--force was not declared. Tagging not complete.\n")
+		os.Exit(1)
+	}
+
+	// retrieve all tags as lib.Version
 	tags = lib.GetTagsAsVersion(repository)
 
 	// determine first, last, current, and final version

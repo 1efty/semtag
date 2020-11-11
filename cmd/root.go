@@ -82,18 +82,6 @@ func initGit() {
 	// get repository
 	repository = lib.GetRepository()
 
-	// get status of worktree
-	status, err := lib.GetStatus(repository)
-	lib.CheckIfError(err)
-
-	// exit if --force is not set and worktree contains changes
-	if len(status) > 0 && !Force {
-		lib.Info("The following changes were found in the worktree:\n\n" +
-			fmt.Sprintln(status) +
-			"--force was not declared. Tagging not complete.\n")
-		os.Exit(1)
-	}
-
 	// retrieve all tags as lib.Version
 	tags = lib.GetTagsAsVersion(repository)
 
@@ -141,6 +129,16 @@ func initConfig() {
 }
 
 func tagAction(repository *git.Repository, tag string, dryrun bool) {
+	// get status of worktree
+	// exit if --force is not set and worktree contains changes
+	if status, err := lib.GetStatus(repository); len(status) > 0 && !Force {
+		lib.CheckIfError(err)
+		lib.Info("\nThe following changes were found in the worktree:\n\n" +
+			fmt.Sprintln(status) +
+			"--force was not declared. Tag was not created.\n")
+		os.Exit(1)
+	}
+
 	if dryrun {
 		lib.Info(fmt.Sprintf("To be tagged: %s", tag))
 	} else {

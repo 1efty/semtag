@@ -17,6 +17,9 @@ var getCurrentCmd = &cobra.Command{
 	Long: `Returns the current version, based on the latest one, if there are un-committed or
 			un-staged changes, they will be reflected in the version, adding the number of
 			pending commits, current branch and commit hash.`,
+	PreRun: func(cmd *cobra.Command, args []string) {
+		initGit()
+	},
 	RunE: func(cmd *cobra.Command, args []string) error {
 		if err := getCurrentAction(); err != nil {
 			return err

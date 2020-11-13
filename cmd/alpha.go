@@ -12,6 +12,9 @@ func init() {
 var alphaCmd = &cobra.Command{
 	Use:   "alpha",
 	Short: "Tags the current ref as a alpha version, the tag will contain all the commits from the last final version.",
+	PreRun: func(cmd *cobra.Command, args []string) {
+		initGit()
+	},
 	RunE: func(cmd *cobra.Command, args []string) error {
 		if err := alphaAction(); err != nil {
 			return err

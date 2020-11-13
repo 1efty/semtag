@@ -50,7 +50,6 @@ func Execute() error {
 
 func init() {
 	cobra.OnInitialize(initConfig)
-	cobra.OnInitialize(initGit)
 
 	rootCmd.PersistentFlags().StringVar(&CfgFile, "config", "", "config file (default is \"$HOME/.semtag.yaml\")")
 	rootCmd.PersistentFlags().BoolVarP(&Output, "output", "o", false, "Output the version only, shows the bumped version, but doesn't perform tag.")

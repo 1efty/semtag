@@ -12,6 +12,9 @@ func init() {
 var betaCmd = &cobra.Command{
 	Use:   "beta",
 	Short: "Tags the current ref as a beta version, the tag will contain all the commits from the last final version.",
+	PreRun: func(cmd *cobra.Command, args []string) {
+		initGit()
+	},
 	RunE: func(cmd *cobra.Command, args []string) error {
 		if err := betaAction(); err != nil {
 			return err

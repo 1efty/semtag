@@ -14,6 +14,9 @@ func init() {
 var getFinalCmd = &cobra.Command{
 	Use:   "getfinal",
 	Short: "Returns latest tagged final version.",
+	PreRun: func(cmd *cobra.Command, args []string) {
+		initGit()
+	},
 	RunE: func(cmd *cobra.Command, args []string) error {
 		if err := getFinalAction(); err != nil {
 			return err

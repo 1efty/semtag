@@ -12,6 +12,9 @@ func init() {
 var candidateCmd = &cobra.Command{
 	Use:   "candidate",
 	Short: "Tags the current ref as a release candidate, the tag will contain all the commits from the last final version.",
+	PreRun: func(cmd *cobra.Command, args []string) {
+		initGit()
+	},
 	RunE: func(cmd *cobra.Command, args []string) error {
 		if err := candidateAction(); err != nil {
 			return err

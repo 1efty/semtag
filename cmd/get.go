@@ -14,6 +14,9 @@ func init() {
 var getCmd = &cobra.Command{
 	Use:   "get",
 	Short: "Returns both current, final, and last tagged versions.",
+	PreRun: func(cmd *cobra.Command, args []string) {
+		initGit()
+	},
 	RunE: func(cmd *cobra.Command, args []string) error {
 		if err := getAction(); err != nil {
 			return err

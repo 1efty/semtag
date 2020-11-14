@@ -51,13 +51,14 @@ func Execute() error {
 func init() {
 	cobra.OnInitialize(initConfig)
 
-	rootCmd.PersistentFlags().StringVar(&CfgFile, "config", "", "config file (default is \"$HOME/.semtag.yaml\")")
 	rootCmd.PersistentFlags().BoolVarP(&Output, "output", "o", false, "Output the version only, shows the bumped version, but doesn't perform tag.")
 	rootCmd.PersistentFlags().BoolVarP(&Force, "force", "f", false, "Forces tagging, even if there are un-staged or un-commited changes.")
-	rootCmd.PersistentFlags().StringVar(&Metadata, "metadata", "", "Specifies the metadata (+BUILD) for the version.")
-	rootCmd.PersistentFlags().StringVar(&Version, "version", "", `Specifies manually the version to be tagged, must be a valid semantic version
- 				in the format X.Y.Z where X, Y and Z are positive integers.`)
-	rootCmd.PersistentFlags().StringVar(&Scope, "scope", "patch",
+
+	rootCmd.PersistentFlags().StringVarP(&CfgFile, "config", "c", "", "config file (default is \"$HOME/.semtag.yaml\")")
+	rootCmd.PersistentFlags().StringVarP(&Metadata, "metadata", "m", "", "Specifies the metadata (+BUILD) for the version.")
+	rootCmd.PersistentFlags().StringVarP(&Version, "version", "v", "", `Specifies manually the version to be tagged, must be a valid semantic version
+				 in the format X.Y.Z where X, Y and Z are positive integers.`)
+	rootCmd.PersistentFlags().StringVarP(&Scope, "scope", "s", "",
 		`The scope that must be increased, can be major, minor or patch.
 		The resulting version will match X.Y.Z(-PRERELEASE)(+BUILD)
 		where X, Y and Z are positive integers, PRERELEASE is an optional

@@ -54,7 +54,7 @@ func init() {
 	rootCmd.PersistentFlags().BoolVarP(&Output, "output", "o", false, "Output the version only, shows the bumped version, but doesn't perform tag.")
 	rootCmd.PersistentFlags().BoolVarP(&Force, "force", "f", false, "Forces tagging, even if there are un-staged or un-commited changes.")
 
-	rootCmd.PersistentFlags().StringVarP(&CfgFile, "config", "c", "", "config file (default is \"$HOME/.semtag.yaml\")")
+	rootCmd.PersistentFlags().StringVarP(&CfgFile, "config", "c", "", "Specifies which config file to use")
 	rootCmd.PersistentFlags().StringVarP(&Metadata, "metadata", "m", "", "Specifies the metadata (+BUILD) for the version.")
 	rootCmd.PersistentFlags().StringVarP(&Version, "version", "v", "", `Specifies manually the version to be tagged, must be a valid semantic version
 				 in the format X.Y.Z where X, Y and Z are positive integers.`)
@@ -70,7 +70,10 @@ func init() {
 		'minor' and 'patch', depending on the amount of lines added (<10% will
 		choose patch).`)
 
+	// bind flags to config
 	viper.BindPFlag("version", rootCmd.PersistentFlags().Lookup("version"))
+	viper.BindPFlag("metadata", rootCmd.PersistentFlags().Lookup("metadata"))
+	viper.BindPFlag("scope", rootCmd.PersistentFlags().Lookup("scope"))
 }
 
 func er(msg interface{}) {
@@ -107,24 +110,31 @@ func initGit() {
 
 func initConfig() {
 	if CfgFile != "" {
-		// Use config file from the flag.
+		// use config file from the flag.
 		viper.SetConfigFile(CfgFile)
 	} else {
-		// Find home directory.
+		// find home directory.
 		home, err := homedir.Dir()
 		if err != nil {
 			er(err)
 		}
 
-		// Search config in home directory with name ".cobra" (without extension).
+		viper.SetConfigName(".semtag")
+		viper.SetConfigType("yaml")
+
+		// search for config in $HOME and current directory
 		viper.AddConfigPath(home)
-		viper.SetConfigName(".cobra")
+		viper.AddConfigPath(".")
 	}
 
 	viper.AutomaticEnv()
 
-	if err := viper.ReadInConfig(); err == nil {
-		fmt.Println("Using config file:", viper.ConfigFileUsed())
+	if err := viper.ReadInConfig(); err != nil {
+		if _, ok := err.(viper.ConfigFileNotFoundError); ok {
+			// config file not found; nothing to do here
+		} else {
+			// config file was found but another error was produced; same
+		}
 	}
 }
 

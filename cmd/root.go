@@ -58,7 +58,7 @@ func init() {
 	rootCmd.PersistentFlags().StringVarP(&Metadata, "metadata", "m", "", "Specifies the metadata (+BUILD) for the version.")
 	rootCmd.PersistentFlags().StringVarP(&Version, "version", "v", "", `Specifies manually the version to be tagged, must be a valid semantic version
 				 in the format X.Y.Z where X, Y and Z are positive integers.`)
-	rootCmd.PersistentFlags().StringVarP(&Scope, "scope", "s", "",
+	rootCmd.PersistentFlags().StringVarP(&Scope, "scope", "s", "patch",
 		`The scope that must be increased, can be major, minor or patch.
 		The resulting version will match X.Y.Z(-PRERELEASE)(+BUILD)
 		where X, Y and Z are positive integers, PRERELEASE is an optional
@@ -147,6 +147,11 @@ func tagAction(repository *git.Repository, tag string, dryrun bool) {
 			fmt.Sprintln(status) +
 			"--force was not declared. Tag was not created.\n")
 		os.Exit(1)
+	}
+
+	// override the tag to be created if -v flag is set
+	if Version != "" {
+		tag = Version
 	}
 
 	if dryrun {

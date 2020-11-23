@@ -4,6 +4,7 @@ import (
 	"sort"
 )
 
+// Versions is a slice of Version
 type Versions []*Version
 
 func (s Versions) Len() int {

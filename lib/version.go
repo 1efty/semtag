@@ -2,6 +2,7 @@ package lib
 
 import (
 	"errors"
+	"strings"
 
 	"github.com/coreos/go-semver/semver"
 )
@@ -10,6 +11,14 @@ import (
 type Version struct {
 	LeadingV bool
 	Semver   *semver.Version
+}
+
+// New creates a new version from a string
+func New(version string) *Version {
+	return &Version{
+		LeadingV: strings.HasPrefix(version, "v"),
+		Semver:   semver.New(strings.TrimPrefix(version, "v")),
+	}
 }
 
 // String returns semantic version string including leading `v`

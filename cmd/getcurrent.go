@@ -7,26 +7,30 @@ import (
 	"github.com/spf13/cobra"
 )
 
-func init() {
-	rootCmd.AddCommand(getCurrentCmd)
-}
+var getCurrentCmd *cobra.Command
 
-var getCurrentCmd = &cobra.Command{
-	Use:   "getcurrent",
-	Short: "Returns the current version, based on the latest one.",
-	Long: `Returns the current version, based on the latest one, if there are un-committed or
+var _ = RegisterCommandVar(func() {
+	getCurrentCmd = &cobra.Command{
+		Use:   "getcurrent",
+		Short: "Returns the current version, based on the latest one.",
+		Long: `Returns the current version, based on the latest one, if there are un-committed or
 			un-staged changes, they will be reflected in the version, adding the number of
 			pending commits, current branch and commit hash.`,
-	PreRun: func(cmd *cobra.Command, args []string) {
-		initGit()
-	},
-	RunE: func(cmd *cobra.Command, args []string) error {
-		if err := getCurrentAction(); err != nil {
-			return err
-		}
-		return nil
-	},
-}
+		PreRun: func(cmd *cobra.Command, args []string) {
+			initGit()
+		},
+		RunE: func(cmd *cobra.Command, args []string) error {
+			if err := getCurrentAction(); err != nil {
+				return err
+			}
+			return nil
+		},
+	}
+})
+
+var _ = RegisterCommandInit(func() {
+	rootCmd.AddCommand(getCurrentCmd)
+})
 
 func getCurrentAction() error {
 	lib.Info(fmt.Sprintf("Current tagged version: %s", currentVersion.String()))

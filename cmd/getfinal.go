@@ -7,23 +7,27 @@ import (
 	"github.com/spf13/cobra"
 )
 
-func init() {
-	rootCmd.AddCommand(getFinalCmd)
-}
+var getFinalCmd *cobra.Command
 
-var getFinalCmd = &cobra.Command{
-	Use:   "getfinal",
-	Short: "Returns latest tagged final version.",
-	PreRun: func(cmd *cobra.Command, args []string) {
-		initGit()
-	},
-	RunE: func(cmd *cobra.Command, args []string) error {
-		if err := getFinalAction(); err != nil {
-			return err
-		}
-		return nil
-	},
-}
+var _ = RegisterCommandVar(func() {
+	getFinalCmd = &cobra.Command{
+		Use:   "getfinal",
+		Short: "Returns latest tagged final version.",
+		PreRun: func(cmd *cobra.Command, args []string) {
+			initGit()
+		},
+		RunE: func(cmd *cobra.Command, args []string) error {
+			if err := getFinalAction(); err != nil {
+				return err
+			}
+			return nil
+		},
+	}
+})
+
+var _ = RegisterCommandInit(func() {
+	rootCmd.AddCommand(getFinalCmd)
+})
 
 func getFinalAction() error {
 	lib.Info(fmt.Sprintf("Final tagged version: %v", finalVersion.String()))

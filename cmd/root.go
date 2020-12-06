@@ -3,10 +3,6 @@ package cmd
 import (
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
-
-	"github.com/go-git/go-git/v5"
-
-	"github.com/1efty/semtag/lib"
 )
 
 var (
@@ -22,14 +18,6 @@ var (
 	Version string
 	// Metadata represents suffix to append to tag
 	Metadata string
-
-	repository     *git.Repository
-	status         *git.Status
-	firstVersion   *lib.Version
-	lastVersion    *lib.Version
-	currentVersion *lib.Version
-	finalVersion   *lib.Version
-	tags           []*lib.Version
 )
 
 var rootCmd *cobra.Command

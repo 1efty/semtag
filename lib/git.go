@@ -4,6 +4,7 @@ import (
 	"sort"
 	"strings"
 
+	"github.com/1efty/semtag/pkg/version"
 	"github.com/coreos/go-semver/semver"
 	"github.com/go-git/go-git/v5"
 	"github.com/go-git/go-git/v5/plumbing"
@@ -47,10 +48,10 @@ func GetRepository() *git.Repository {
 }
 
 // GetFinalVersion retrieves the last tag that is neither an alpha, beta, or release-candidate
-func GetFinalVersion(repository *git.Repository) *Version {
+func GetFinalVersion(repository *git.Repository) *version.Version {
 	var finalLeadingV bool
 	var finalSemver = semver.New("0.0.0")
-	var finalVersion = &Version{LeadingV: false, Semver: finalSemver}
+	var finalVersion = &version.Version{LeadingV: false, Semver: finalSemver}
 
 	iter, err := getTags(repository)
 	CheckIfError(err)
@@ -76,7 +77,7 @@ func GetFinalVersion(repository *git.Repository) *Version {
 		if !tempSemver.LessThan(*finalSemver) && tempSemver.PreRelease == "" {
 			finalSemver = tempSemver
 			finalLeadingV = tempLeadingV
-			finalVersion = &Version{LeadingV: finalLeadingV, Semver: tempSemver}
+			finalVersion = &version.Version{LeadingV: finalLeadingV, Semver: tempSemver}
 		}
 
 		return nil
@@ -86,8 +87,8 @@ func GetFinalVersion(repository *git.Repository) *Version {
 }
 
 // GetTagsAsVersion retrieves a slice of tags from a repository and converts them to Version objects
-func GetTagsAsVersion(repository *git.Repository) []*Version {
-	var tagsAsSemver Versions
+func GetTagsAsVersion(repository *git.Repository) []*version.Version {
+	var tagsAsSemver version.Versions
 
 	// Get all tags (annotated and light)
 	iter, err := getTags(repository)
@@ -106,7 +107,7 @@ func GetTagsAsVersion(repository *git.Repository) []*Version {
 			versionString = strings.TrimPrefix(versionString, "v")
 		}
 
-		tagsAsSemver = append(tagsAsSemver, &Version{LeadingV: leadingV, Semver: semver.New(versionString)})
+		tagsAsSemver = append(tagsAsSemver, &version.Version{LeadingV: leadingV, Semver: semver.New(versionString)})
 
 		return nil
 	})
@@ -131,8 +132,8 @@ func CreateTag(repository *git.Repository, tag string) error {
 }
 
 // BumpVersion creates new version and bumps according to scope
-func BumpVersion(v *Version, scope string, preRelease string, metadata string) (*Version, error) {
-	newVersion := &Version{
+func BumpVersion(v *version.Version, scope string, preRelease string, metadata string) (*version.Version, error) {
+	newVersion := &version.Version{
 		LeadingV: v.LeadingV,
 		Semver:   v.Semver,
 	}

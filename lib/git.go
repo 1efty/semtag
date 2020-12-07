@@ -49,35 +49,24 @@ func GetRepository() *git.Repository {
 
 // GetFinalVersion retrieves the last tag that is neither an alpha, beta, or release-candidate
 func GetFinalVersion(repository *git.Repository) *version.Version {
-	var finalLeadingV bool
-	var finalSemver = semver.New("0.0.0")
-	var finalVersion = &version.Version{LeadingV: false, Semver: finalSemver}
+	var finalVersion = version.New("0.0.0")
 
 	iter, err := getTags(repository)
 	CheckIfError(err)
 
 	// iterate through all tags, and determine which one is final
 	err = iter.ForEach(func(ref *plumbing.Reference) error {
-		var tempLeadingV bool
 		var tempVersionString string
 
 		tempVersionString, err := getTagString(repository, ref)
 		CheckIfError(err)
 
-		// handle leading `v`
-		if strings.HasPrefix(tempVersionString, "v") {
-			tempLeadingV = true
-			tempVersionString = strings.TrimPrefix(tempVersionString, "v")
-		}
-
-		// create temp semver
-		tempSemver := semver.New(tempVersionString)
+		// create temp version
+		tempVersion := version.New(tempVersionString)
 
 		// change final variables if a tag was found that is newer, and is not an alpha, beta, or release-candidate
-		if !tempSemver.LessThan(*finalSemver) && tempSemver.PreRelease == "" {
-			finalSemver = tempSemver
-			finalLeadingV = tempLeadingV
-			finalVersion = &version.Version{LeadingV: finalLeadingV, Semver: tempSemver}
+		if !tempVersion.Semver.LessThan(*finalVersion.Semver) && tempVersion.Semver.PreRelease == "" {
+			finalVersion = tempVersion
 		}
 
 		return nil
@@ -96,18 +85,11 @@ func GetTagsAsVersion(repository *git.Repository) []*version.Version {
 
 	err = iter.ForEach(func(ref *plumbing.Reference) error {
 		var versionString string
-		var leadingV bool = false
 
 		versionString, err = getTagString(repository, ref)
 		CheckIfError(err)
 
-		// handle leading `v`
-		if strings.HasPrefix(versionString, "v") {
-			leadingV = true
-			versionString = strings.TrimPrefix(versionString, "v")
-		}
-
-		tagsAsSemver = append(tagsAsSemver, &version.Version{LeadingV: leadingV, Semver: semver.New(versionString)})
+		tagsAsSemver = append(tagsAsSemver, version.New(versionString))
 
 		return nil
 	})
@@ -133,10 +115,7 @@ func CreateTag(repository *git.Repository, tag string) error {
 
 // BumpVersion creates new version and bumps according to scope
 func BumpVersion(v *version.Version, scope string, preRelease string, metadata string) (*version.Version, error) {
-	newVersion := &version.Version{
-		LeadingV: v.LeadingV,
-		Semver:   v.Semver,
-	}
+	newVersion := v
 	err := newVersion.Bump(scope)
 	CheckIfError(err)
 
@@ -144,5 +123,5 @@ func BumpVersion(v *version.Version, scope string, preRelease string, metadata s
 	newVersion.Semver.PreRelease = semver.PreRelease(preRelease)
 	newVersion.Semver.Metadata = metadata
 
-	return newVersion, nil
+	return v, nil
 }

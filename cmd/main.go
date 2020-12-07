@@ -6,7 +6,6 @@ import (
 
 	"github.com/1efty/semtag/lib"
 	"github.com/1efty/semtag/pkg/version"
-	"github.com/coreos/go-semver/semver"
 	"github.com/go-git/go-git/v5"
 	homedir "github.com/mitchellh/go-homedir"
 	"github.com/spf13/viper"
@@ -75,7 +74,7 @@ func initGit() {
 	// determine first, last, current, and final version
 	switch numOfTags := len(tags); numOfTags {
 	case 0:
-		firstVersion = &version.Version{LeadingV: false, Semver: semver.New("0.0.0")}
+		firstVersion = version.New("0.0.0")
 		lastVersion = firstVersion
 		currentVersion = firstVersion
 		finalVersion = firstVersion

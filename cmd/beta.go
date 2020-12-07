@@ -28,7 +28,7 @@ var _ = RegisterCommandInit(func() {
 })
 
 func betaAction() error {
-	v, err := lib.BumpVersion(lastVersion, Scope, "beta", Metadata)
+	v, err := bumpVersion(repository.LastVersion, Scope, "beta", Metadata)
 	lib.CheckIfError(err)
 	tagAction(repository, v.String(), Output)
 	return nil

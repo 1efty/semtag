@@ -33,6 +33,6 @@ var _ = RegisterCommandInit(func() {
 })
 
 func getCurrentAction() error {
-	lib.Info(fmt.Sprintf("Current tagged version: %s", currentVersion.String()))
+	lib.Info(fmt.Sprintf("Current tagged version: %s", repository.CurrentVersion.String()))
 	return nil
 }

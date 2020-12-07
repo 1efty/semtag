@@ -30,7 +30,7 @@ var _ = RegisterCommandInit(func() {
 })
 
 func getAction() error {
-	lib.Info(fmt.Sprintf("Current final version: %v", finalVersion))
-	lib.Info(fmt.Sprintf("Last tagged version: %v", lastVersion))
+	lib.Info(fmt.Sprintf("Current final version: %v", repository.FinalVersion.String()))
+	lib.Info(fmt.Sprintf("Last tagged version: %v", repository.LastVersion.String()))
 	return nil
 }

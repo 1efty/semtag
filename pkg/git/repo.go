@@ -4,7 +4,7 @@ import (
 	"sort"
 	"strings"
 
-	"github.com/1efty/semtag/lib"
+	"github.com/1efty/semtag/pkg/utils"
 	"github.com/1efty/semtag/pkg/version"
 	"github.com/go-git/go-git/v5"
 	"github.com/go-git/go-git/v5/plumbing"
@@ -65,12 +65,12 @@ func New(dir string) *Repo {
 // CreateTag tags HEAD in a given repository
 func (r Repo) CreateTag(tag string) error {
 	h, err := r.repo.Head()
-	lib.CheckIfError(err)
+	utils.CheckIfError(err)
 
 	_, err = r.repo.CreateTag(tag, h.Hash(), &git.CreateTagOptions{
 		Message: tag,
 	})
-	lib.CheckIfError(err)
+	utils.CheckIfError(err)
 
 	return nil
 }
@@ -101,19 +101,19 @@ func getTagsAsVersion(repository *git.Repository) []*version.Version {
 
 	// Get all tags (annotated and light)
 	iter, err := getTags(repository)
-	lib.CheckIfError(err)
+	utils.CheckIfError(err)
 
 	err = iter.ForEach(func(ref *plumbing.Reference) error {
 		var versionString string
 
 		versionString, err = getTagString(repository, ref)
-		lib.CheckIfError(err)
+		utils.CheckIfError(err)
 
 		tagsAsSemver = append(tagsAsSemver, version.New(versionString))
 
 		return nil
 	})
-	lib.CheckIfError(err)
+	utils.CheckIfError(err)
 
 	sort.Sort(tagsAsSemver)
 
@@ -122,14 +122,14 @@ func getTagsAsVersion(repository *git.Repository) []*version.Version {
 
 func getStatus(repository *git.Repository) git.Status {
 	worktree, err := repository.Worktree()
-	lib.CheckIfError(err)
+	utils.CheckIfError(err)
 	status, _ := worktree.Status()
 	return status
 }
 
 func getRepository(dir string) *git.Repository {
 	repository, err := git.PlainOpen(dir)
-	lib.CheckIfError(err)
+	utils.CheckIfError(err)
 	return repository
 }
 
@@ -137,14 +137,14 @@ func getFinalVersion(repository *git.Repository) *version.Version {
 	var finalVersion = version.New("0.0.0")
 
 	iter, err := getTags(repository)
-	lib.CheckIfError(err)
+	utils.CheckIfError(err)
 
 	// iterate through all tags, and determine which one is final
 	err = iter.ForEach(func(ref *plumbing.Reference) error {
 		var tempVersionString string
 
 		tempVersionString, err := getTagString(repository, ref)
-		lib.CheckIfError(err)
+		utils.CheckIfError(err)
 
 		// create temp version
 		tempVersion := version.New(tempVersionString)

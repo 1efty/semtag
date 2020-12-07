@@ -4,8 +4,8 @@ import (
 	"fmt"
 	"os"
 
-	"github.com/1efty/semtag/lib"
 	repo "github.com/1efty/semtag/pkg/git"
+	"github.com/1efty/semtag/pkg/utils"
 	"github.com/1efty/semtag/pkg/version"
 	"github.com/coreos/go-semver/semver"
 	homedir "github.com/mitchellh/go-homedir"
@@ -111,7 +111,7 @@ func tagAction(repository *repo.Repo, tag string, dryrun bool) {
 	// get status of worktree
 	// exit if --force is not set and worktree contains changes
 	if status := repository.Status; len(status) > 0 && !Force {
-		lib.Info("\nThe following changes were found in the worktree:\n\n" +
+		utils.Info("\nThe following changes were found in the worktree:\n\n" +
 			fmt.Sprintln(status) +
 			"--force was not declared. Tag was not created.\n")
 		os.Exit(1)
@@ -123,7 +123,7 @@ func tagAction(repository *repo.Repo, tag string, dryrun bool) {
 	}
 
 	if dryrun {
-		lib.Info(fmt.Sprintf("To be tagged: %s", tag))
+		utils.Info(fmt.Sprintf("To be tagged: %s", tag))
 	} else {
 		repository.CreateTag(tag)
 	}
@@ -132,7 +132,7 @@ func tagAction(repository *repo.Repo, tag string, dryrun bool) {
 func bumpVersion(v *version.Version, scope string, preRelease string, metadata string) (*version.Version, error) {
 	newVersion := v
 	err := newVersion.Bump(scope)
-	lib.CheckIfError(err)
+	utils.CheckIfError(err)
 
 	// set pre-release and metadata
 	newVersion.Semver.PreRelease = semver.PreRelease(preRelease)

@@ -1,7 +1,7 @@
 package cmd
 
 import (
-	"github.com/1efty/semtag/lib"
+	"github.com/1efty/semtag/pkg/utils"
 	"github.com/spf13/cobra"
 )
 
@@ -29,7 +29,7 @@ var _ = RegisterCommandInit(func() {
 
 func alphaAction() error {
 	v, err := bumpVersion(repository.LastVersion, Scope, "alpha", Metadata)
-	lib.CheckIfError(err)
+	utils.CheckIfError(err)
 	tagAction(repository, v.String(), Output)
 	return nil
 }

@@ -3,7 +3,7 @@ package cmd
 import (
 	"fmt"
 
-	"github.com/1efty/semtag/lib"
+	"github.com/1efty/semtag/pkg/utils"
 	"github.com/spf13/cobra"
 )
 
@@ -33,6 +33,6 @@ var _ = RegisterCommandInit(func() {
 })
 
 func getCurrentAction() error {
-	lib.Info(fmt.Sprintf("Current tagged version: %s", repository.CurrentVersion.String()))
+	utils.Info(fmt.Sprintf("Current tagged version: %s", repository.CurrentVersion.String()))
 	return nil
 }

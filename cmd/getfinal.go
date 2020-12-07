@@ -3,7 +3,7 @@ package cmd
 import (
 	"fmt"
 
-	"github.com/1efty/semtag/lib"
+	"github.com/1efty/semtag/pkg/utils"
 	"github.com/spf13/cobra"
 )
 
@@ -30,6 +30,6 @@ var _ = RegisterCommandInit(func() {
 })
 
 func getFinalAction() error {
-	lib.Info(fmt.Sprintf("Final tagged version: %v", repository.FinalVersion.String()))
+	utils.Info(fmt.Sprintf("Final tagged version: %v", repository.FinalVersion.String()))
 	return nil
 }

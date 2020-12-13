@@ -1,7 +1,6 @@
 package cmd
 
 import (
-	"fmt"
 	"os"
 
 	repo "github.com/1efty/semtag/pkg/git"
@@ -18,58 +17,20 @@ const (
 
 var (
 	repository *repo.Repo
-
-	varInitFncs []func()
-	cmdInitFncs []func()
 )
 
 // Execute adds all child commands to the root command and sets flags appropriately.
 // This is called by main.main(). It only needs to happen once to the rootCmd.
 func Execute() {
-	if err := Main(); err != nil {
-		er(err)
-	}
-}
-
-// RegisterCommandVar is used to register with semtag the initialization function
-// for the command variable.
-// Something must be returned to use the `var _ = ` trick.
-func RegisterCommandVar(c func()) bool {
-	varInitFncs = append(varInitFncs, c)
-
-	return true
-}
-
-// RegisterCommandInit is used to register with px the initialization function
-// for the command flags.
-// Something must be returned to use the `var _ = ` trick.
-func RegisterCommandInit(c func()) bool {
-	cmdInitFncs = append(cmdInitFncs, c)
-	return true
+	err := Main()
+	utils.CheckIfError(err)
 }
 
 // Main starts the semtag cli
 // Stupid simple initialization
 func Main() error {
-	// Setup all variables.
-	// Setting up all the variables first will allow semtag
-	// to initialize the init functions in any order
-	for _, v := range varInitFncs {
-		v()
-	}
-
-	// Call all plugin inits
-	for _, f := range cmdInitFncs {
-		f()
-	}
-
 	// Execute semtag
 	return rootCmd.Execute()
-}
-
-func er(msg interface{}) {
-	fmt.Println("Error:", msg)
-	os.Exit(1)
 }
 
 // initConfig reads in config file
@@ -80,9 +41,7 @@ func initConfig() {
 	} else {
 		// find home directory.
 		home, err := homedir.Dir()
-		if err != nil {
-			er(err)
-		}
+		utils.CheckIfError(err)
 
 		viper.SetConfigName(".semtag")
 		viper.SetConfigType("yaml")
@@ -111,9 +70,7 @@ func tagAction(repository *repo.Repo, tag string, dryrun bool) {
 	// get status of worktree
 	// exit if --force is not set and worktree contains changes
 	if status := repository.Status; len(status) > 0 && !Force {
-		utils.Info("\nThe following changes were found in the worktree:\n\n" +
-			fmt.Sprintln(status) +
-			"--force was not declared. Tag was not created.\n")
+		utils.Info("\nThe following changes were found in the worktree:\n\n%s\n--force was not declared. Tag was not created.\n", status)
 		os.Exit(1)
 	}
 
@@ -123,7 +80,7 @@ func tagAction(repository *repo.Repo, tag string, dryrun bool) {
 	}
 
 	if dryrun {
-		utils.Info(fmt.Sprintf("To be tagged: %s", tag))
+		utils.Info("To be tagged: %s", tag)
 	} else {
 		repository.CreateTag(tag)
 	}

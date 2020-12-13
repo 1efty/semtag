@@ -5,29 +5,20 @@ import (
 	"github.com/spf13/cobra"
 )
 
-var finalCmd *cobra.Command
+var finalCmd = &cobra.Command{
+	Use:   "final",
+	Short: "Tags the current ref as a final version, this only be done on the master branch.",
+	PreRun: func(cmd *cobra.Command, args []string) {
+		initGit()
+	},
+	RunE: finalAction,
+}
 
-var _ = RegisterCommandVar(func() {
-	finalCmd = &cobra.Command{
-		Use:   "final",
-		Short: "Tags the current ref as a final version, this only be done on the master branch.",
-		PreRun: func(cmd *cobra.Command, args []string) {
-			initGit()
-		},
-		RunE: func(cmd *cobra.Command, args []string) error {
-			if err := finalAction(); err != nil {
-				return err
-			}
-			return nil
-		},
-	}
-})
-
-var _ = RegisterCommandInit(func() {
+func init() {
 	rootCmd.AddCommand(finalCmd)
-})
+}
 
-func finalAction() error {
+func finalAction(cmd *cobra.Command, args []string) error {
 	v, err := bumpVersion(repository.LastVersion, Scope, "", "")
 	utils.CheckIfError(err)
 	tagAction(repository, v.String(), Output)

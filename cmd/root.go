@@ -20,16 +20,12 @@ var (
 	Metadata string
 )
 
-var rootCmd *cobra.Command
+var rootCmd = &cobra.Command{
+	Use:   "semtag",
+	Short: "Tag your repository according to Semantic Versioning",
+}
 
-var _ = RegisterCommandVar(func() {
-	rootCmd = &cobra.Command{
-		Use:   "semtag",
-		Short: "Tag your repository according to Semantic Versioning",
-	}
-})
-
-var _ = RegisterCommandInit(func() {
+func init() {
 	cobra.OnInitialize(initConfig)
 
 	rootCmd.PersistentFlags().BoolVarP(&Output, "output", "o", false, "Output the version only, shows the bumped version, but doesn't perform tag.")
@@ -55,4 +51,4 @@ var _ = RegisterCommandInit(func() {
 	viper.BindPFlag("version", rootCmd.PersistentFlags().Lookup("version"))
 	viper.BindPFlag("metadata", rootCmd.PersistentFlags().Lookup("metadata"))
 	viper.BindPFlag("scope", rootCmd.PersistentFlags().Lookup("scope"))
-})
+}

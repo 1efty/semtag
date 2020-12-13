@@ -7,29 +7,20 @@ import (
 	"github.com/spf13/cobra"
 )
 
-var getLastCmd *cobra.Command
+var getLastCmd = &cobra.Command{
+	Use:   "getlast",
+	Short: "Returns the latest tagged version.",
+	PreRun: func(cmd *cobra.Command, args []string) {
+		initGit()
+	},
+	RunE: getLastAction,
+}
 
-var _ = RegisterCommandVar(func() {
-	getLastCmd = &cobra.Command{
-		Use:   "getlast",
-		Short: "Returns the latest tagged version.",
-		PreRun: func(cmd *cobra.Command, args []string) {
-			initGit()
-		},
-		RunE: func(cmd *cobra.Command, args []string) error {
-			if err := getLastAction(); err != nil {
-				return err
-			}
-			return nil
-		},
-	}
-})
-
-var _ = RegisterCommandInit(func() {
+func init() {
 	rootCmd.AddCommand(getLastCmd)
-})
+}
 
-func getLastAction() error {
+func getLastAction(cmd *cobra.Command, args []string) error {
 	utils.Info(fmt.Sprintf("Last tagged version: %v", repository.LastVersion.String()))
 	return nil
 }

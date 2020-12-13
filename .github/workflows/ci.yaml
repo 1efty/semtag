@@ -109,5 +109,5 @@ jobs:
       - name: Go mod verify
         run: go mod verify
 
-      - name: Go test
-        run: go test -v
+      - name: Go test cmd
+        run: go test -v github.com/1efty/semtag/cmd

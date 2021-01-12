@@ -1,0 +1,74 @@
+name: ci
+
+on:
+  pull_request:
+  push:
+    branches:
+      - master
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Unshallow
+        run: git fetch --prune --unshallow
+
+      - name: Read go version
+        id: go-version
+        run: |
+          content=`cat ./.go-version`
+          echo "::set-output name=content::$content"
+
+      - name: Set up go
+        uses: actions/setup-go@v2
+        with:
+          # TODO: Replace with go-version-from-file when it is supported
+          # https://github.com/actions/setup-go/pull/62
+          go-version: ${{ steps.go-version.outputs.content }}
+
+      - name: Snapshot build (cross-platform)
+        uses: goreleaser/goreleaser-action@v2
+        with:
+          version: latest
+          args: build --snapshot --skip-post-hooks
+
+  test:
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os:
+          - ubuntu-18.04
+          - windows-2019
+          - macos-10.15
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Unshallow
+        run: git fetch --prune --unshallow
+
+      - name: Read go version (Unix)
+        if: ${{ runner.os != 'Windows' }}
+        id: go-version-unix
+        run: |
+          content=`cat ./.go-version`
+          echo "::set-output name=content::$content"
+
+      - name: Set Up Go
+        uses: actions/setup-go@v2
+        with:
+          # TODO: Replace with go-version-from-file when it is supported
+          # https://github.com/actions/setup-go/pull/62
+          go-version: ${{ steps.go-version-unix.outputs.content || steps.go-version-win.outputs.content }
+
+      - name: Go mod download
+        run: go mod download -x
+
+      - name: Go mod verify
+        run: go mod verify
+
+      - name: Go test
+        run: go test -v

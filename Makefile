@@ -1,7 +1,9 @@
-.PHONY: container changelog ci/build
+.PHONY: build/container changelog ci/build ci/release/dryrun
 
-container:
-	docker build . -t semtag
+export GOVERSION = $(shell cat .go-version)
+
+build/container:
+	docker build . -t semtag --build-arg GOVERSION
 
 changelog:
 	git-chglog -o CHANGELOG.md

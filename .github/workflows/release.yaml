@@ -7,6 +7,7 @@ on:
 
 jobs:
   release:
+    name: release (static binaries)
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -35,3 +36,39 @@ jobs:
           args: release
         env:
           GITHUB_TOKEN: $${{ secrets.GITHUB_TOKEN }}
+  # TODO: release container from GitHub Actions
+  # container:
+  #   name: release (container)
+  #   runs-on: ubuntu-latest
+  #   steps:
+  #     - name: Checkout
+  #       uses: actions/checkout@v2
+  #     - name: Set up QEMU
+  #       uses: docker/setup-qemu-action@v1
+  #     - name: Set up Docker Buildx
+  #       uses: docker/setup-buildx-action@v1
+  #     - name: Read go version
+  #       id: go-version
+  #       run: |
+  #         content=`cat ./.go-version`
+  #         echo "::set-output name=content::$content"
+  #     - name: Read current tag
+  #       id: current-tag
+  #       run: echo "::set-output name=tag::${GITHUB_REF#refs/*/}"
+  #     - name: Login to GitHub Packages
+  #       uses: docker/login-action@v1
+  #       with:
+  #         registry: docker.pkg.github.com
+  #         username: ${{ github.actor }}
+  #         password: ${{ secrets.GITHUB_TOKEN }}
+  #     - name: Build and push container
+  #       id: docker-build
+  #       uses: docker/build-push-action@v2
+  #       with:
+  #         push: true
+  #         build-args: |
+  #           GOVERSION=${{ steps.go-version.outputs.content }}
+  #         tags: |
+  #           docker.pkg.github.com/1efty/semtag/semtag:${{ steps.current-tag.outputs.tag }}
+  #     - name: Image digest
+  #       run: echo ${{ steps.docker-build.outputs.digest }}

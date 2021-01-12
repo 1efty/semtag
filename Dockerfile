@@ -1,6 +1,6 @@
-ARG GO_VERSION="1.15"
+ARG GOVERSION="1.15.6"
 
-FROM golang:${GO_VERSION}-alpine
+FROM golang:${GOVERSION}-alpine
 
 RUN apk add --no-cache git
 
